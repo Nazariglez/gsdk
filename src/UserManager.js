@@ -7,7 +7,8 @@ function UserManager(core){
 UserManager.prototype.constructor = UserManager;
 
 UserManager.prototype.create = function(credentials, callback){
-
+    this.core.request('account/create', credentials, "POST", callback);
+    return this;
 };
 
 UserManager.prototype.loginWithEmail = function(email, password, callback){

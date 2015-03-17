@@ -10,8 +10,8 @@ var API_URL = "http://prepro.gamedonia.com",
 
 function Gamedonia(gameSecret, apiKey, url, version){
     url = url || API_URL;
-    version = (version || API_VERSION) + "/";
-    this.apiURL = url + '/' + version;
+    this.version = "/" + (version || API_VERSION) + "/";
+    this.apiURL = url + this.version;
     this.gameSecret = gameSecret;
     this.apiKey = apiKey;
 
@@ -41,20 +41,27 @@ Gamedonia.prototype.request = function(url, data, method, callback){
             break;
     }
 
-    request.data(data)
-        .set('X-Date', date)
+    request.set('X-Date', date)
         .set('X-Gamedonia-ApiKey', this.apiKey)
         .set('Content-type', contentType)
         .set('X-Gamedonia-Signature', this._getSignature(url, data, method, contentType, date))
-        .send(data)
-        .end(callback);
+        .send(JSON.stringify(data))
+        .end(function(err, res){
+            if(err){
+                throw new Error(err);
+            }
+
+            if(callback && typeof callback === "function")callback(res);
+        });
 };
 
 Gamedonia.prototype._getSignature = function(url, data, method, contentType, date){
+    var path = this.version + url;
+    console.log(path);
     if(method === "POST" || method === "PUT"){
-        return sign(this.gameSecret, JSON.stringify(data), contentType, date, method, url);
+        return sign(this.gameSecret, JSON.stringify(data), contentType, date, method, path);
     }else{
-        return signGetOrDelete(this.gameSecret, date, method, url);
+        return signGetOrDelete(this.gameSecret, date, method, path);
     }
 };
 
