@@ -1,7 +1,7 @@
 var superAgent = require('superagent'),
     UserManager = require('./UserManager'),
     DataManager = require('./DataManager'),
-    cryptoHex = require('crypto-js').enc.Hex,
+    cryptoHex = require('crypto-js/enc-hex'),
     MD5 = require('crypto-js/md5'),
     HmacSHA1= require('crypto-js/hmac-sha1');
 
