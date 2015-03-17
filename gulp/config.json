@@ -1,0 +1,10 @@
+{
+  "namespace" : "Gamedonia",
+  "scripts" : "./src/**/*.js",
+  "entryPoint" : "./src/index.js",
+  "bundleName" : "gamedonia",
+  "devSuffix" : ".dev",
+  "bundleDest" : "./build",
+
+  "defaultTask" : ["jshint","compile"]
+}
