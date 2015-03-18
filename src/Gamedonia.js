@@ -5,7 +5,7 @@ var superAgent = require('superagent'),
     MD5 = require('crypto-js/md5'),
     HmacSHA1= require('crypto-js/hmac-sha1');
 
-var API_URL = "http://prepro.gamedonia.com",
+var API_URL = "http://api.gamedonia.com",
     API_VERSION = "v1";
 
 function Gamedonia(gameSecret, apiKey, url, version){
@@ -21,43 +21,8 @@ function Gamedonia(gameSecret, apiKey, url, version){
 
 Gamedonia.prototype.constructor = Gamedonia;
 
-Gamedonia.prototype.request = function(url, data, method, callback){
-    var date = new Date().toUTCString(),
-        contentType = "application/json";
-
-    var request;
-    switch(method){
-        case "POST":
-            request = superAgent.post(this.apiURL + url);
-            break;
-        case "GET":
-            request = superAgent.get(this.apiURL + url);
-            break;
-        case "PUT":
-            request = superAgent.put(this.apiURL + url);
-            break;
-        case "DELETE":
-            request = superAgent.del(this.apiURL + url);
-            break;
-    }
-
-    request.set('X-Date', date)
-        .set('X-Gamedonia-ApiKey', this.apiKey)
-        .set('Content-type', contentType)
-        .set('X-Gamedonia-Signature', this._getSignature(url, data, method, contentType, date))
-        .send(JSON.stringify(data))
-        .end(function(err, res){
-            if(err){
-                throw new Error(err);
-            }
-
-            if(callback && typeof callback === "function")callback(res);
-        });
-};
-
-Gamedonia.prototype._getSignature = function(url, data, method, contentType, date){
+Gamedonia.prototype.getSignature = function(url, data, method, contentType, date){
     var path = this.version + url;
-    console.log(path);
     if(method === "POST" || method === "PUT"){
         return sign(this.gameSecret, JSON.stringify(data), contentType, date, method, path);
     }else{
